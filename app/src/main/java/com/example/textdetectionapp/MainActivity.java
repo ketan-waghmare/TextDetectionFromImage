@@ -1,5 +1,6 @@
 package com.example.textdetectionapp;
 
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.content.Intent;
@@ -20,6 +21,9 @@ import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
+import com.google.firebase.ml.vision.text.RecognizedLanguage;
+
+import java.util.List;
 
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
@@ -118,7 +122,35 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             return;
         }
         for (FirebaseVisionText.TextBlock block : firebaseVisionText.getTextBlocks()) {
-            myTextView.append(block.getText());
+//            myTextView.append(block.getText());
+        }
+
+
+        String resultText = firebaseVisionText.getText();
+        for (FirebaseVisionText.TextBlock block: firebaseVisionText.getTextBlocks()) {
+            String blockText = block.getText();
+            Float blockConfidence = block.getConfidence();
+            List<RecognizedLanguage> blockLanguages = block.getRecognizedLanguages();
+            Log.e("blockConfidence_log = "+blockConfidence,"{} blockText_log = "+blockText+" {} blockLanguages_log "+blockLanguages);
+//            Point[] blockCornerPoints = block.getCornerPoints();
+            Rect blockFrame = block.getBoundingBox();
+            for (FirebaseVisionText.Line line: block.getLines()) {
+                String lineText = line.getText();
+                Float lineConfidence = line.getConfidence();
+                List<RecognizedLanguage> lineLanguages = line.getRecognizedLanguages();
+                myTextView.append("\n"+lineText);
+                Log.e("lineConfidence_log = "+lineConfidence," {} lineText_log = "+lineText+" {} lineLanguages_log "+lineLanguages);
+//                Point[] lineCornerPoints = line.getCornerPoints();
+                Rect lineFrame = line.getBoundingBox();
+                for (FirebaseVisionText.Element element: line.getElements()) {
+                    String elementText = element.getText();
+                    Float elementConfidence = element.getConfidence();
+                    List<RecognizedLanguage> elementLanguages = element.getRecognizedLanguages();
+                    Log.e("elementC_log = "+elementConfidence," {} elementText_log = "+elementText+" {}lineLanguages_log "+elementLanguages);
+//                    Point[] elementCornerPoints = element.getCornerPoints();
+                    Rect elementFrame = element.getBoundingBox();
+                }
+            }
         }
     }
 }
